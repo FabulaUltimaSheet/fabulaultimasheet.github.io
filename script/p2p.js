@@ -744,7 +744,3 @@ function answerPing(whoPings=null){
 		p2p.connList.filter(c=>c.peer===whoPings)[0]
 	)
 }
-
-//whisper verso uno specifico peer
-//salvare log chat?
-//salvare nome utente?
