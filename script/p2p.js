@@ -148,16 +148,21 @@ function initializeLobby() {
 
 function shareLobby(){
 	if(p2p.master){
-		if(typeof Capacitor.Plugins.Share !== 'undefined') {
-			Capacitor.Plugins.Share.share(
-				{
-					text: "Connettiti a questa lobby di Fabula Ultima:",
-					url: domain+p2p.peer.id,
-				}
-			)
-		} else {
-			return p2p.peer.id
+		if(typeof Capacitor !== 'undefined') {
+			if(typeof Capacitor.Plugins.Share !== 'undefined') {
+				Capacitor.Plugins.Share.share(
+					{
+						text: "Connettiti a questa lobby di Fabula Ultima:",
+						url: domain+p2p.peer.id,
+					}
+				)
+				return
+			}
 		}
+		
+		navigator.clipboard.writeText(p2p.peer.id);
+		alert("Lobby ID copiato: " + p2p.peer.id);
+		return p2p.peer.id
 	}
 }
 
@@ -744,3 +749,7 @@ function answerPing(whoPings=null){
 		p2p.connList.filter(c=>c.peer===whoPings)[0]
 	)
 }
+
+//whisper verso uno specifico peer
+//salvare log chat?
+//salvare nome utente?
