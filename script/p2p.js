@@ -160,10 +160,18 @@ function shareLobby(){
 			}
 		}
 		
-		navigator.clipboard.writeText(p2p.peer.id).then(() => {
-			alert("Lobby ID copiato: " + p2p.peer.id);
+
+		let shareBtn = document.getElementById("shareLobby");
+		shareBtn.setAttribute("lobbyID", p2p.peer.id)
+		navigator.clipboard.writeText(shareBtn.getAttribute("lobbyID")).then(() => {
+			alert("Lobby ID copiato: " + shareBtn.getAttribute("lobbyID"));
 			return p2p.peer.id
 		})
+
+		/*navigator.clipboard.writeText(p2p.peer.id).then(() => {
+			alert("Lobby ID copiato: " + p2p.peer.id);
+			return p2p.peer.id
+		})*/
 	}
 }
 
