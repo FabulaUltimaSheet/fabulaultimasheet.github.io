@@ -160,6 +160,14 @@ body{
     font-size: 1em;
 }
 
+#FUToolkit #lobbyID{
+    -webkit-user-select: auto;
+    -khtml-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
 #FUToolkit #listOfLibraries{
     margin-bottom: 1em;
 }
