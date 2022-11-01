@@ -6047,9 +6047,13 @@ function startUp() {
         }
     })
 
-    window.addEventListener("popstate", evt)
-	
-	function evt(){
-		e.preventDefault()
+    document.addEventListener(“deviceready”, onDeviceReady, false);
+
+	function onDeviceReady(){
+	document.addEventListener(“backbutton”, onBackKeyDown, false);
+	}
+	function onBackKeyDown(){
+	alert(‘back’);
+	return false;
 	}
 }
