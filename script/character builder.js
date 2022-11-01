@@ -6049,6 +6049,6 @@ function startUp() {
 
     window.onbeforeunload = (event) => {
         event.preventDefault();
-        alert("Are you sure you want to exit?");
-      }
+        return event.returnValue = "Are you sure you want to exit?";
+    }
 }
