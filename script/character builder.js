@@ -6047,17 +6047,9 @@ function startUp() {
         }
     })
 
-    document.addEventListener("deviceready", onDeviceReady, false);
-
-	function onDeviceReady(){
-		alert("On Load");
-		document.addEventListener("backbutton", didPressBackButton, false);
-	}
-
-	function didPressBackButton(event) {
-		alert("go back!"); 
-		// event.preventDefault(); //Does not block the backbutton
-		// event.stopPropagation(); //Does not block the backbutton   
-		// return false; //Does not block the backbutton
+    window.addEventListener("popstate", evt)
+	
+	function evt(){
+		e.preventDefault()
 	}
 }
