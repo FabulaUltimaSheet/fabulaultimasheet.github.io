@@ -1,598 +1,601 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <html>
-<head>
-    <title>Fabula Ultima Character Sheet</title>
-	<meta name="viewport" content= "width=device-width, user-scalable=no">
-    <script src="capacitor.js"></script>
-    <script src="script\character builder.js"></script>
-	<script src="script\peerjs.min.js"></script>
-    <script src="script\p2p.js"></script>
-    <link rel="icon" href="">
-    <link rel="stylesheet" href="css\style.css">
-	<link rel="apple-touch-icon" sizes="152x152" href="css/icon.png">
-    <style id="FUSpecificStyle">
-        #FUToolkit #sheetBackground,
-        #FUToolkit .infoBlock,
-        #FUToolkit .compendiumHeader {
-            background-color: #ffedb0;
-            color: black;
-        }
-        
-        #FUToolkit #name,
-        #FUToolkit .scoreTracker,
-        #FUToolkit .classDetail,
-        #FUToolkit .item,
-        #FUToolkit .itemContainer,
-		#FUToolkit .interactable,
-        #FUToolkit .ability {
-            background-color: #fddc71;
-            color: black;
-        }
-        
-        #FUToolkit #openCompendium,
-        #FUToolkit #openGraphics {
-            background-color: #ac8400;
-            color: black;
-        }
-        
-        #FUToolkit #name,
-        #FUToolkit #profileImage>img,
-        #FUToolkit .icon,
-        #FUToolkit .scoreTracker,
-        #FUToolkit .classDetail,
-        #FUToolkit .infoBlock,
-        #FUToolkit .compendiumHeader,
-        #FUToolkit .item,
-        #FUToolkit .itemContainer,
-		#FUToolkit .interactable,
-        #FUToolkit .ability,
-        #FUToolkit .modalWindow,
-        #FUToolkit #popup,
-        #FUToolkit #openCompendium,
-        #FUToolkit #openGraphics {
-            border-color: #423300;
-        }
+    <head>
+        <title>Fabula Ultima Character Sheet</title>
+        <meta name="viewport" content= "width=device-width, user-scalable=no">
+        <!--start languages-->
+        <script>
+            let lang={}
 
-        #FUToolkit .infoBlock .falt,
-        #FUToolkit .compendiumHeader .falt {
-            filter: brightness(0) saturate(100%);
-        }
-        
-        #FUToolkit #name .falt,
-        #FUToolkit .scoreTracker .falt,
-        #FUToolkit .classDetail .falt,
-        #FUToolkit .item .falt,
-        #FUToolkit .itemContainer .falt,
-        #FUToolkit .ability .falt {
-            filter: brightness(0) saturate(100%);
-        }
-        
-        #FUToolkit #openCompendium .falt,
-        #FUToolkit #openGraphics .falt {
-            filter: brightness(0) saturate(100%);
-        }
-    </style>
-</head>
-
-<body>
-    <div id="FUToolkit">
-        <div id="startup">
-			<img src="css/icon.png" />
-			<div id="title">
-				Fabula Ultima Character Builder
-			</div>
-			<div id="starter" onclick="setupEULA();">Start</div>
-		</div>
-        <div id="EULA" style="display:none;">
-		<div style="display:none;">
-			<h1>Si prega di considerare che:</h1>
-			<div id="EULAtext">
-				il qui presente Software viene rilasciato sotto licenza MIT. Inoltre, la distribuzione non autorizzata di materiale di gioco sotto copyright è vietata.				
-			</div>
-			<div id="acceptEULA" onclick="acceptEULA();">Comprendo quanto indicato sopra ed accetto le condizioni all'uso.</div>
-		</div>
-		</div>
-        <div id="sheetBackground"></div>
-        <div class="wrapper" id="sheetWrapper" modeSelector="charSheet">
-            <div class="sheetHeader">
-                <div id="name" title="Fai doppio click per cambiare il nome" style="cursor: pointer;height: 100%;">Nome</div>
-            </div>
-            <div id="charBody" class="sheet">
-                <div id="leftCol" class="sheetCol">
-                    <div id="levelBar" class="infoBlock">
-                        <div id="levelRecap" class="sectionHead">Livello personaggio: <span id="charTotLevel"></span></div>
-                        <div id="levelDetail" class="classContainer" style="display: none;">
-                            <div id="addNewClass" draggable="false"></div>
-                        </div>
-                    </div>
-                    <div id="combatScores" class="infoBlock inRow" style="flex-grow: 0;display: flex;align-items: stretch;">
-                        <div class="infoBlock inColumn" style="width: 50%;">
-                            <div id="scores">Punteggi</div>
-                        </div>
-                        <div id="profileImage" class="infoBlock" style="width: 50%;position:relative;">
-                        </div>
-                    </div>
-                    <div id="statsNStatus" class="infoBlock inRow" style="flex-grow: 0;">
-						<div class="statGrid">
-							<div></div>
-							<div class="statNameTag"></div>
-							<b style="text-align: center;">BASE</b>
-							<b style="text-align: center;">TEMP</b>
-							<div></div>
-							<div></div>
-							<div id="desIcon" draggable="false"></div>
-							<div id="desTag" class="statNameTag">DES</div>
-							<select id="baseDes"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<select id="tempDes"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<div class="statusName">
-								<input type="checkbox" id="slow" />
-								<label for="slow">Lento</label>
-							</div>
-							<div class="statusName thiccStatus">
-								<input type="checkbox" id="enraged" />
-								<label for="enraged">Furente</label>
-							</div>
-							<div id="intIcon" draggable="false"></div>
-							<div id="intTag" class="statNameTag">INT</div>
-							<select id="baseInt"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<select id="tempInt"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<div class="statusName">
-								<input type="checkbox" id="confused" />
-								<label for="confused">Confuso</label>
-							</div>
-							<div id="vigIcon" draggable="false"></div>
-							<div id="vigTag" class="statNameTag">VIG</div>
-							<select id="baseVig"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<select id="tempVig"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<div class="statusName">
-								<input type="checkbox" id="weak" />
-								<label for="weak">Debole</label>
-							</div>
-							<div class="statusName thiccStatus">
-								<input type="checkbox" id="poisoned" />
-								<label for="poisoned">Avvelen.</label>
-							</div>
-							<div id="volIcon" draggable="false"></div>
-							<div id="volTag" class="statNameTag">VOL</div>
-							<select id="baseVol"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<select id="tempVol"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
-							<div class="statusName">
-								<input type="checkbox" id="shaken" />
-								<label for="shaken">Scosso</label>
-							</div>
-						</div>
-                    </div>
-                    <div id="combatStats" class="infoBlock inColumn">
-                        <div class="sectionHead">Iniziativa e Difese</div>
-                        <div class="inColumn">
-                            <div class="inRow">
-                                <div id="rollForInitiative" class="falt">Iniziativa</div>
-                                <div id="initiative" class="interactable" title="Fai doppio click per cambiare il modificatore" style="cursor: pointer;">0</div>
-                            </div>
-                            <div class="inRow">
-                                <div>Difesa</div>
-                                <div id="defense" class="interactable" title="Fai doppio click per cambiare il modificatore" style="cursor: pointer;">10</div>
-                            </div>
-                            <div class="inRow">
-                                <div>Dif. Magica</div>
-                                <div id="magDefense" class="interactable" title="Fai doppio click per cambiare il modificatore" style="cursor: pointer;">10</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="equip" class="infoBlock" style="flex-grow: 0;">
-                        <div class="sectionHead">Equipaggiamento</div>
-                        <div id="currentEquip">
-							<div class="inRow">
-								<div style="font-weight: bold;text-align: left;">Mano Principale</div>
-								<div>
-									<div id="mainHand" name="Colpo Senz’Armi">Colpo Senz’Armi</div>
-									<div>
-										<div id="removeMain" draggable="false"></div>
-									</div>
-								</div>
-							</div>
-							<div class="inRow">
-								<div style="font-weight: bold;text-align: left;">Mano Secondaria</div>
-								<div>
-									<div id="secondaryHand" name="Colpo Senz’Armi">Colpo Senz’Armi</div>
-									<div>
-										<div id="removeSecondary" draggable="false"></div>
-									</div>
-								</div>
-							</div>
-							<div class="inRow">
-								<div style="font-weight: bold;text-align: left;">Armatura</div>
-								<div>
-									<div id="armor" name="Nessuna">Nessuna</div>
-									<div>
-										<div id="removeArmor" draggable="false"></div>
-									</div>
-								</div>
-							</div>
-							<div class="inRow">
-								<div style="font-weight: bold;text-align: left;">Accessorio</div>
-								<div>
-									<div id="accessory" name="">Nessuno</div>
-									<div>
-										<div id="removeAccessory" draggable="false"></div>
-									</div>
-								</div>
-							</div>
-							<div class="inRow" id="accessory2" style="display: none;">
-								<div style="font-weight: bold;text-align: left;">Accessorio bonus</div>
-								<div>
-									<div id="bonusAccessory" name="">Nessuno</div>
-									<div>
-										<div id="removeBonusAccessory" draggable="false"></div>
-									</div>
-								</div>
-							</div>
-                        </div>
-                    </div>
-                    <div id="inventory" class="infoBlock">
-                        <div class="sectionHead">Inventario</div>
-						<div>
-							<div class="inRow" id="goldAndIP" style="flex-wrap: wrap;">
-								<div class="inRow button" id="addInvContainer" style="margin:0;">
-									Aggiungi Contenitore
-								</div>
-								<div class="inRow">
-									<div class="inRow">
-										<div title="Punti Inventario" id="ipIcon" draggable="false"></div>
-										<input type="Number" min=0 id="ip" tabindex="-1"></input>
-										<div id="ip_max" class="interactable" title="Fai click per cambiare il modificatore" style="cursor: pointer;"></div>
-									</div>
-									<div class="inRow">
-										<div title="Zenit" id="znIcon" draggable="false"></div>
-										<input type="Number" min=0 id="zenit" tabindex="-1"></input>
-									</div>
-								</div>
-							</div>
-							<div class="inColumn" id="inventoryList"></div>
-						</div>
-                    </div>
-                </div>
-                <div id="rightCol" class="sheetCol">
-					<div id="traits" class="infoBlock inColumn" style="flex-grow: 0;">
-                        <div class="sectionHead">Tratti</div>
-                        <div class="inColumn">
-							<div class="inRow">
-								<div style="font-weight: bold;">Identit&#224;</div>
-								<div id="identity" class="interactable" title="Fai click per modificare" style="cursor: pointer;"></div>
-							</div>
-							<div class="inRow">
-								<div style="font-weight: bold;">Tema</div>
-								<div id="theme" class="interactable" title="Fai click per modificare" style="cursor: pointer;"></div>
-							</div>
-							<div class="inRow">
-								<div style="font-weight: bold;">Origine</div>
-								<div id="origin" class="interactable" title="Fai click per modificare" style="cursor: pointer;"></div>
-							</div>
-                        </div>
-                    </div>
-                    <div id="bonds" class="infoBlock" style="flex-grow: 0;">
-                        <div class="sectionHead">Legami</div>
-						<div>
-							<div id="addNewBond" draggable="false"></div>
-							<div id="bondsList"></div>
-						</div>
-                    </div>
-                    <div id="abilities" class="infoBlock">
-                        <div class="sectionHead">Abilit&#224;</div>
-						<div>
-							<span id="memoAbilities"></span>
-							<div class="inColumn" id="abilityList">
-							</div>
-                        </div>
-                    </div>
-                    <div id="equipAb" class="infoBlock" style="display: none;">
-                        <div class="sectionHead">Abilit&#224; da Oggetti</div>
-                        <div class="inColumn" id="equipAbilities">
-                        </div>
-                    </div>
-                    <div id="spells" class="infoBlock">
-                        <div class="sectionHead">Incantesimi e Capacit&#224;</div>
-						<div>
-							<span id="memoSpell"></span>
-							<div class="inColumn" id="spellList">
-							</div>
-                        </div>
-                    </div>
-                    <div id="peculiarity" class="infoBlock">
-                        <div class="sectionHead">Peculiarita'</div>
-						<div class="inColumn" style="display:none;">
-							<div class="interactable" id="pecName"></div>
-							<div class="infoBlock" id="pecDesc"></div>
-						</div>
-                    </div>
-                    <div id="zeroPower" class="infoBlock">
-                        <div class="sectionHead">Potere Zero</div>
-						<div class="inRow" style="display:none;">
-							<div id="zeroClock"></div>
-							<div class="inColumn">
-								<div class="interactable" id="zeroName"></div>
-								<div class="infoBlock" id="zeroTrigger"></div>
-								<div class="infoBlock" id="zeroEffect"></div>
-							</div>
-						</div>
-                    </div>
-                    <div id="notes" class="infoBlock">
-                        <div class="sectionHead">Note</div>
-						<div>
-							<div class="inRow button" id="addNote">
-								Aggiungi Nota
-							</div>
-							<div class="inColumn" id="noteList"></div>
-						</div>
-                    </div>
-                </div>
-            </div>
-            <div id="openCompendium" class="fixedIcon">
-            </div>
-            <div id="openGraphics" class="fixedIcon">
-            </div>
-            <div id="compendiumFU" modal class="modalWindow" style="display: none;">
-                <div id="closeModal" style="font-size: xx-large;top:auto;right:2%;position: absolute;" draggable="false"></div>
-                <h2 style="text-align: center;">Compendio</h2>
-                <div>
-                    <div class="compendiumHeader">Lista oggetti</div>
-                    <div id="availableItems" class="infoBlock" style="display: none;flex-direction: column;max-height: 60%;overflow: auto;">
-                    </div>
-                </div>
-                <div>
-                    <div class="compendiumHeader">Lista abilit&#224;</div>
-                    <div id="availableAbilities" class="infoBlock" style="display: none;"></div>
-                </div>
-                <div style="display:none;">
-                    <div class="compendiumHeader">Wiki</div>
-                    <div id="wikiEntries" class="infoBlock" style="display: none;"></div>
-                </div>
-            </div>
-            <div id="graphFU" modal class="modalWindow" style="display: none;">
-                <div id="closeModal" style="font-size: xx-large;top:auto;right:2%;position: absolute;" draggable="false"></div>
-                <h2 style="text-align: center;">Opzioni grafiche</h2>
-                <div>
-                    <div class="compendiumHeader">Carica Immagine Personaggio</div>
-                    <div class="infoBlock" style="flex-direction: column;align-items: center;">
-                        <input type="file" id="loadPCImg" />
-                    </div>
-                </div>
-                <div>
-                    <div class="compendiumHeader">Palette Scheda</div>
-                    <div class="infoBlock" style="flex-direction: column;align-items: center;">
-                        <input type="color" id="colorPicker" />
-                    </div>
-                </div>
-            </div>
-            <div id="editorFU" modal class="modalWindow" style="display: none;">
-                <div id="closeEditor" style="font-size: xx-large;margin-left: 0.1em;position: absolute;" draggable="false"></div>
-                <h2 style="text-align: center;">Editor</h2>
-                <div>
-                    <div class="infoBlock">Propriet&#224; entit&#224;</div>
-                    <div id="editorContent" class="infoBlock" style="width: 100%; min-height: 80%;">
-                    </div>
-                </div>
-            </div>
-            <div id="contextMenu" modal style="display: none;" class="modalWindow inColumn">
-                <div chatInter><span>&#183; Invia in Chat</span></div>
-                <div equipButton><span>&#183; Equipaggia in Mano Principale</span></div>
-                <div equipButton><span>&#183; Equipaggia in Mano Secondaria</span></div>
-                <div equipButton><span>&#183; Equipaggia come Armatura</span></div>
-                <div equipButton><span>&#183; Equipaggia come Accessorio</span></div>
-                <div equipButton><span style="display: none;">&#183; Equipaggia come Accessorio Secondario</span></div>
-                <div invManage><span>&#183; Sposta in su</span></div>
-                <div invManage><span>&#183; Sposta in giù</span></div>
-                <div directEquip>
-					<span style="display: none;"><i>Equipaggia...</i></span>
-					<span id="backItems" style="visibility: hidden; display: none;"><i>&#9664; Oggetti precedenti...</i></span>
-					<div id="listForEquip" style="display: none;"></div>
-					<span id="forwardItems" style="visibility: hidden; display: none;"><i>Oggetti successivi... &#9654;</i></span>
-				</div>
-            </div>
-        </div>
-        <div class="wrapper" id="libraryWrapper" modeSelector="library" style="display: none;">
-            <div id="libraryEditorWrap" class="editorWindow">
-                <h2 style="text-align: center;">Editor Libreria</h2>
-                <div id="librarySelector" class="editorBlock">
-                    <div>
-                        <select id="selectListToEdit"> 
-                            <option value="">...</option>
-                            <option value="classes">Classi</option>
-                            <option value="items">Oggetti</option>
-                            <option value="abilities">Abilit&#224;</option>
-                            <option value="wiki">Wiki</option>
-                        </select>
-                        <select id="listToEdit">
-                            <option value="">...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <button id="confirmObjectToEdit" disabled>Modifica</button>
-                        <button id="duplicateObject" disabled>Crea una Copia</button>
-                        <button id="deleteObject" disabled>Elimina</button>
-                    </div>
-                </div>
-                <div class="editorBlock">
-                    <div id="libraryEditor" style="width: 100%;">
-                        <i style="margin:1em;">Seleziona una entit&#224; per modificarla.</i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="wrapper" id="bestiaryWrapper" modeSelector="bestiary" style="display: none;">
-            <div>
-                <div id="encounterMonsters" class="editorBlock"></div>
-            </div>
-            <div id="bestiaryEditorWrap" class="editorWindow">
-                <h2 style="text-align: center;">Editor Mostro</h2>
-                <div id="bestiarySelector" class="editorBlock">
-                    <div>
-                        <button id="putMonsterInEncounter">Aggiungi allo incontro</button>
-                        <select id="monsterList">
-                            <option value="">...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <button id="confirmMonsterToEdit">Modifica</button>
-                        <button id="duplicateMonster">Crea una Copia</button>
-                        <button id="deleteMonster">Elimina</button>
-                    </div>
-                </div>
-                <div class="editorBlock" style="overflow: auto;">
-                    <div id="bestiaryEditor" style="width: 100%;">
-                        <i style="margin:1em;">Seleziona una entit&#224; per modificarla.</i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="openMenu" class="fixedIcon"></div>
-        <div id="openClocks" class="fixedIcon" style="display: none;"></div>
-        <div id="openLobby" class="fixedIcon" style="display: none;"></div>
-        <div id="openChat" class="fixedIcon" style="display: none;"></div>
-        <div id="modalBckgr" modal style="display: none;"></div>
-        <div id="FUMenu" modal class="modalWindow" style="display: none;">
-            <div id="closeMenu" draggable="false"></div>
-            <h2 style="text-align: center;">Menu</h2>
-            <div class="inRow">
-                <div id="selectCharacterMode" class="modeSelector" selected="true">Scheda PG</div>
-                <div id="selectLibraryMode" class="modeSelector">Libreria</div>
-                <div id="selectBestiaryMode" class="modeSelector" style="display: none;">Bestiario</div>
-            </div>
-            <div modeSelector="charSheet">
-                <div class="menuHeader">Gestione Salvataggio</div>
-                <div class="menuBlock" style="flex-direction: column;">
-                    <button id="saveBtn" style="font-size: x-large; margin:1em 1em 0 1em;border-radius: 8px;">Salva personaggio</button>
-                    <div class="inRow"><input type="checkbox" id="autosaveFlag"><label for="autosaveFlag">Abilita autosalvataggio</label></div>
-                    <button id="exportChar" style="font-size: large; margin:auto;border-radius: 8px; width: 50%;">Salva su disco</button>
-                    <div id="manageCache" class="menuBlock">
-						<div>
-							<span>Personaggi in memoria: </span>
-							<select id="listOfChars">
-								<option>...</option>
-							</select>
-						</div>
-						<div>
-							<button id="loadBtn">Carica</button>
-							<button id="deleteBtn">Elimina</button>
-						</div>
-						<div id="charSharer" style="display: none;">
-							<select id="usListChar"></select>
-							<button id="shareChar">Condividi</button>
-						</div>
-                    </div>
-                    <div id="importExport" class="menuBlock" style="padding: 5px;margin: 0 1em 1em 1em;">
-                        <span>Importa da file </span><input type="file" id="charLoader">
-                    </div>
-                </div>
-            </div>
-            <div modeSelector="library" style="display: none;">
-                <div class="menuHeader">Gestione Libreria</div>
-                <div class="menuBlock" style="flex-direction: column;">
-                    <div id="libraryManagement" class="menuBlock" style="padding: 5px;margin: 1em 1em 1em 1em;">
-                        <div style="padding: 5px;">
-                            <span id="curLibraryName">Libreria corrente: </span>
-                        </div>
-                        <div style="padding: 5px;">
-							<div>
-								<span>Librerie archiviate: </span>
-								<select id="listOfLibraries">
-									<option>...</option>
-								</select>
-							</div>
-							<div>
-								<button id="loadLib">Carica</button>
-								<button id="removeLib">Elimina</button>
-							</div>
-							<div id="libSharer" style="display: none;">
-								<select id="usListLib"></select>
-								<button id="shareLib">Condividi</button>
-								<button id="broadcastLib">Manda a tutti</button>
-							</div>
-                        </div>
-                        <div style="padding: 5px;">
-                            <button id="saveLib" style="display: none;">Salva Libreria Attuale</button>
-                            <button id="setLib">Imposta come Default</button>
-                            <button id="exportLib">Salva su disco</button>
-                        </div>
-                    </div>
-                    <div id="loadLibrary" class="menuBlock" style="padding: 5px;margin: 0 1em 1em 1em;">
-                        <span>Importa da file </span><input type="file" id="libraryLoader">
-                    </div>
-                </div>
-				<div class="menuBlock">
-					<button id="resetBtn" style="color:red;margin: 1em;">!!!RESET DATI!!!</button>
-				</div>
-            </div>
+            let defaultData = {
+                id: "Default"
+            }
+        </script>
+        <script src="languages\ITA.js"></script>
+        <script src="languages\ENG.js"></script>
+        <!--end languages-->
+        <script src="capacitor.js"></script>
+        <script src="script\character builder.js"></script>
+        <script src="script\peerjs.min.js"></script>
+        <script src="script\p2p.js"></script>
+        <link rel="icon" href="">
+        <link rel="stylesheet" href="css\style.css">
+        <style id="FUSpecificStyle">
+            #FUToolkit #sheetBackground,
+            #FUToolkit .infoBlock,
+            #FUToolkit .compendiumHeader {
+                background-color: #ffedb0;
+                color: black;
+            }
             
-        </div>
-		<div id="FUChat" modal style="display: none;">
-			<div>
-				<div id="closeChat" class="fixedIcon" draggable="false"></div>
-				<h3 style="text-align: center;">Chat</h3>
-				<div id="secretRollShow" class="fixedIcon" draggable="false" style="display:none;"><label for="secretRoll">Chat segreta?</label><input id="secretRoll" type="checkbox" /></div>
-			</div>
-            <div id="chatLog" draggable="false"></div>
-            <div id="chatFeedback" draggable="false"></div>
-            <div id="chatBlock" class="menuBlock">
-                <textarea id="msgToSend"></textarea>
-                <button id="sendChatMsg">Invia</button>
+            #FUToolkit #name,
+            #FUToolkit .scoreTracker,
+            #FUToolkit .classDetail,
+            #FUToolkit .item,
+            #FUToolkit .itemContainer,
+            #FUToolkit .interactable,
+            #FUToolkit .ability {
+                background-color: #fddc71;
+                color: black;
+            }
+            
+            #FUToolkit #openCompendium,
+            #FUToolkit #openGraphics {
+                background-color: #ac8400;
+                color: black;
+            }
+            
+            #FUToolkit #name,
+            #FUToolkit #profileImage>img,
+            #FUToolkit .icon,
+            #FUToolkit .scoreTracker,
+            #FUToolkit .classDetail,
+            #FUToolkit .infoBlock,
+            #FUToolkit .compendiumHeader,
+            #FUToolkit .item,
+            #FUToolkit .itemContainer,
+            #FUToolkit .interactable,
+            #FUToolkit .ability,
+            #FUToolkit .modalWindow,
+            #FUToolkit #popup,
+            #FUToolkit #openCompendium,
+            #FUToolkit #openGraphics {
+                border-color: #423300;
+            }
+
+            #FUToolkit .infoBlock .falt,
+            #FUToolkit .compendiumHeader .falt {
+                filter: brightness(0) saturate(100%);
+            }
+            
+            #FUToolkit #name .falt,
+            #FUToolkit .scoreTracker .falt,
+            #FUToolkit .classDetail .falt,
+            #FUToolkit .item .falt,
+            #FUToolkit .itemContainer .falt,
+            #FUToolkit .ability .falt {
+                filter: brightness(0) saturate(100%);
+            }
+            
+            #FUToolkit #openCompendium .falt,
+            #FUToolkit #openGraphics .falt {
+                filter: brightness(0) saturate(100%);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="FUToolkit">
+            <div id="startup">
+                <img src="css/icon.png" />
+                <div id="title">
+                    Fabula Ultima Character Builder
+                </div>
+                <div id="starter" onclick="setupLang();" class="acceptBtn">Start</div>
+            </div>
+            <div id="langChoser" style="display:none;">
+                <div>
+                    <h1 langtag="0">Scegli la lingua:</h1>
+                    <select id="languages">
+                        <option value="ITA">Italiano</option>
+                        <option value="ENG">English</option>
+                    </select>
+                    <div id="selectLang" onclick="selectLang();" class="acceptBtn" langtag="1">Accetta</div>
+                </div>
+            </div>
+            <div id="EULA" style="display:none;">
+                <div style="display:none;">
+                    <h1 langtag="2">Si prega di considerare che:</h1>
+                    <div id="EULAtext" langtag="3">
+                        il qui presente Software viene rilasciato sotto licenza MIT. Inoltre, la distribuzione non autorizzata di materiale di gioco sotto copyright è vietata.
+                    </div>
+                    <div id="acceptEULA" onclick="acceptEULA();" class="acceptBtn" langtag="4">Comprendo quanto indicato sopra ed accetto le condizioni all'uso.</div>
+                </div>
+            </div>
+            <div id="sheetBackground"></div>
+            <div class="wrapper" id="sheetWrapper" modeSelector="charSheet">
+                <div class="sheetHeader">
+                    <div id="name" title="Fai doppio click per cambiare il nome" style="cursor: pointer;height: 100%;" langtag="23">Nome</div>
+                </div>
+                <div id="charBody" class="sheet">
+                    <div id="leftCol" class="sheetCol">
+                        <div id="levelBar" class="infoBlock">
+                            <div id="levelRecap" class="sectionHead"><span langtag="5">Livello personaggio: </span><span id="charTotLevel"></span></div>
+                            <div id="levelDetail" class="classContainer" style="display: none;">
+                                <div id="addNewClass" draggable="false"></div>
+                            </div>
+                        </div>
+                        <div id="combatScores" class="infoBlock inRow" style="flex-grow: 0;display: flex;align-items: stretch;">
+                            <div class="infoBlock inColumn" style="width: 50%;">
+                                <div id="scores">Punteggi</div>
+                            </div>
+                            <div id="profileImage" class="infoBlock" style="width: 50%;position:relative;">
+                            </div>
+                        </div>
+                        <div id="statsNStatus" class="infoBlock inRow" style="flex-grow: 0;">
+                            <div class="statGrid">
+                                <div></div>
+                                <div class="statNameTag"></div>
+                                <b style="text-align: center;">BASE</b>
+                                <b style="text-align: center;">TEMP</b>
+                                <div></div>
+                                <div></div>
+                                <div id="desIcon" draggable="false"></div>
+                                <div id="desTag" class="statNameTag" langtag="7">DES</div>
+                                <select id="baseDes"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <select id="tempDes"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <div class="statusName">
+                                    <input type="checkbox" id="slow" />
+                                    <label for="slow" langtag="11">Lento</label>
+                                </div>
+                                <div class="statusName thiccStatus">
+                                    <input type="checkbox" id="enraged" />
+                                    <label for="enraged" langtag="15">Furente</label>
+                                </div>
+                                <div id="intIcon" draggable="false"></div>
+                                <div id="intTag" class="statNameTag" langtag="8">INT</div>
+                                <select id="baseInt"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <select id="tempInt"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <div class="statusName">
+                                    <input type="checkbox" id="confused" />
+                                    <label for="confused" langtag="12">Confuso</label>
+                                </div>
+                                <div id="vigIcon" draggable="false"></div>
+                                <div id="vigTag" class="statNameTag" langtag="9">VIG</div>
+                                <select id="baseVig"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <select id="tempVig"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <div class="statusName">
+                                    <input type="checkbox" id="weak" />
+                                    <label for="weak" langtag="13">Debole</label>
+                                </div>
+                                <div class="statusName thiccStatus">
+                                    <input type="checkbox" id="poisoned" />
+                                    <label for="poisoned" langtag="16">Avvelen.</label>
+                                </div>
+                                <div id="volIcon" draggable="false"></div>
+                                <div id="volTag" class="statNameTag" langtag="10">VOL</div>
+                                <select id="baseVol"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <select id="tempVol"><option value=6>d6</option><option value=8>d8</option><option value=10>d10</option><option value=12>d12</option><option value=20>d20</option></select>
+                                <div class="statusName">
+                                    <input type="checkbox" id="shaken" />
+                                    <label for="shaken" langtag="14">Scosso</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="combatStats" class="infoBlock inColumn">
+                            <div class="sectionHead"><span langtag="17">Iniziativa e Difese</span></div>
+                            <div class="inColumn">
+                                <div class="inRow">
+                                    <div id="rollForInitiative" class="falt" langtag="18">Iniziativa</div>
+                                    <div id="initiative" class="interactable" title="Fai doppio click per cambiare il modificatore" style="cursor: pointer;" langtag="26">0</div>
+                                </div>
+                                <div class="inRow">
+                                    <div langtag="19">Difesa</div>
+                                    <div id="defense" class="interactable" title="Fai doppio click per cambiare il modificatore" style="cursor: pointer;" langtag="26">10</div>
+                                </div>
+                                <div class="inRow">
+                                    <div langtag="20">Dif. Magica</div>
+                                    <div id="magDefense" class="interactable" title="Fai doppio click per cambiare il modificatore" style="cursor: pointer;" langtag="26">10</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="equip" class="infoBlock" style="flex-grow: 0;">
+                            <div class="sectionHead"><span langtag="21">Equipaggiamento</span></div>
+                            <div id="currentEquip">
+                                <div class="inRow">
+                                    <div style="font-weight: bold;text-align: left;" langtag="22">Mano Principale</div>
+                                    <div>
+                                        <div id="mainHand" name="Colpo Senz’Armi">Colpo Senz’Armi</div>
+                                        <div>
+                                            <div id="removeMain" draggable="false"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inRow">
+                                    <div style="font-weight: bold;text-align: left;" langtag="24">Mano Secondaria</div>
+                                    <div>
+                                        <div id="secondaryHand" name="Colpo Senz’Armi">Colpo Senz’Armi</div>
+                                        <div>
+                                            <div id="removeSecondary" draggable="false"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inRow">
+                                    <div style="font-weight: bold;text-align: left;" langtag="25">Armatura</div>
+                                    <div>
+                                        <div id="armor" name="Nessuna">Nessuna</div>
+                                        <div>
+                                            <div id="removeArmor" draggable="false"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inRow">
+                                    <div style="font-weight: bold;text-align: left;" langtag="27">Accessorio</div>
+                                    <div>
+                                        <div id="accessory" name="">Nessuno</div>
+                                        <div>
+                                            <div id="removeAccessory" draggable="false"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inRow" id="accessory2" style="display: none;">
+                                    <div style="font-weight: bold;text-align: left;" langtag="29">Accessorio bonus</div>
+                                    <div>
+                                        <div id="bonusAccessory" name="">Nessuno</div>
+                                        <div>
+                                            <div id="removeBonusAccessory" draggable="false"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="inventory" class="infoBlock">
+                            <div class="sectionHead"><span langtag="31">Inventario</span></div>
+                            <div>
+                                <div class="inRow" id="goldAndIP" style="flex-wrap: wrap;">
+                                    <div class="inRow button" id="addInvContainer" style="margin:0;">
+                                        <span langtag="32">Aggiungi Contenitore</span>
+                                    </div>
+                                    <div class="inRow">
+                                        <div class="inRow">
+                                            <div title="Punti Inventario" id="ipIcon" draggable="false" langtag="28"></div>
+                                            <input type="Number" min=0 id="ip" tabindex="-1"></input>
+                                            <div id="ip_max" class="interactable" title="Fai click per cambiare il modificatore" style="cursor: pointer;" langtag="26"></div>
+                                        </div>
+                                        <div class="inRow">
+                                            <div title="Zenit" id="znIcon" draggable="false" langtag="30"></div>
+                                            <input type="Number" min=0 id="zenit" tabindex="-1"></input>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inColumn" id="inventoryList"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="rightCol" class="sheetCol">
+                        <div id="traits" class="infoBlock inColumn" style="flex-grow: 0;">
+                            <div class="sectionHead"><span langtag="33">Tratti</span></div>
+                            <div class="inColumn">
+                                <div class="inRow">
+                                    <div style="font-weight: bold;" langtag="34">Identit&#224;</div>
+                                    <div id="identity" class="interactable" title="Fai click per modificare" style="cursor: pointer;" langtag="117"></div>
+                                </div>
+                                <div class="inRow">
+                                    <div style="font-weight: bold;" langtag="35">Tema</div>
+                                    <div id="theme" class="interactable" title="Fai click per modificare" style="cursor: pointer;" langtag="117"></div>
+                                </div>
+                                <div class="inRow">
+                                    <div style="font-weight: bold;" langtag="36">Origine</div>
+                                    <div id="origin" class="interactable" title="Fai click per modificare" style="cursor: pointer;" langtag="117"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="bonds" class="infoBlock" style="flex-grow: 0;">
+                            <div class="sectionHead"><span langtag="37">Legami</span></div>
+                            <div>
+                                <div id="addNewBond" draggable="false"></div>
+                                <div id="bondsList"></div>
+                            </div>
+                        </div>
+                        <div id="abilities" class="infoBlock">
+                            <div class="sectionHead"><span langtag="38">Abilit&#224;</span></div>
+                            <div>
+                                <span id="memoAbilities"></span>
+                                <div class="inColumn" id="abilityList">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="equipAb" class="infoBlock" style="display: none;">
+                            <div class="sectionHead"><span langtag="39">Abilit&#224; da Oggetti</span></div>
+                            <div class="inColumn" id="equipAbilities">
+                            </div>
+                        </div>
+                        <div id="spells" class="infoBlock">
+                            <div class="sectionHead"><span langtag="40">Incantesimi e Capacit&#224;</span></div>
+                            <div>
+                                <span id="memoSpell"></span>
+                                <div class="inColumn" id="spellList">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="peculiarity" class="infoBlock">
+                            <div class="sectionHead"><span langtag="41">Peculiarita'</span></div>
+                            <div class="inColumn" style="display:none;">
+                                <div class="interactable" id="pecName"></div>
+                                <div class="infoBlock" id="pecDesc"></div>
+                            </div>
+                        </div>
+                        <div id="zeroPower" class="infoBlock">
+                            <div class="sectionHead"><span langtag="42">Potere Zero</span></div>
+                            <div class="inRow" style="display:none;">
+                                <div id="zeroClock"></div>
+                                <div class="inColumn">
+                                    <div class="interactable" id="zeroName"></div>
+                                    <div class="infoBlock" id="zeroTrigger"></div>
+                                    <div class="infoBlock" id="zeroEffect"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="notes" class="infoBlock">
+                            <div class="sectionHead"><span langtag="116">Note</span></div>
+                            <div>
+                                <div class="inRow button" id="addNote">
+                                    <span langtag="43">Aggiungi Nota</span>
+                                </div>
+                                <div class="inColumn" id="noteList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="openCompendium" class="fixedIcon">
+                </div>
+                <div id="openGraphics" class="fixedIcon">
+                </div>
+                <div id="compendiumFU" modal class="modalWindow" style="display: none;">
+                    <div id="closeModal" style="font-size: xx-large;top:auto;right:2%;position: absolute;" draggable="false"></div>
+                    <h2 style="text-align: center;" langtag="44">Compendio</h2>
+                    <div>
+                        <div class="compendiumHeader" setExpander="0"><span langtag="45">Lista oggetti</span></div>
+                        <div id="availableItems" class="infoBlock" style="display: none;flex-direction: column;max-height: 60%;overflow: auto;">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="compendiumHeader" setExpander="0"><span langtag="46">Lista abilit&#224;</span></div>
+                        <div id="availableAbilities" class="infoBlock" style="display: none;"></div>
+                    </div>
+                    <div style="display:none;">
+                        <div class="compendiumHeader" setExpander="0"><span langtag="47">Wiki</span></div>
+                        <div id="wikiEntries" class="infoBlock" style="display: none;"></div>
+                    </div>
+                </div>
+                <div id="graphFU" modal class="modalWindow" style="display: none;">
+                    <div id="closeModal" style="font-size: xx-large;top:auto;right:2%;position: absolute;" draggable="false"></div>
+                    <h2 style="text-align: center;" langtag="48">Opzioni grafiche</h2>
+                    <div>
+                        <div class="compendiumHeader" setExpander="1"><span langtag="49">Carica Immagine Personaggio</span></div>
+                        <div class="infoBlock" style="flex-direction: column;align-items: center;">
+                            <input type="file" id="loadPCImg" />
+                        </div>
+                    </div>
+                    <div>
+                        <div class="compendiumHeader" setExpander="1"><span langtag="50">Palette Scheda</span></div>
+                        <div class="infoBlock" style="flex-direction: column;align-items: center;">
+                            <input type="color" id="colorPicker" />
+                        </div>
+                    </div>
+                </div>
+                <div id="editorFU" modal class="modalWindow" style="display: none;">
+                    <div id="closeEditor" style="font-size: xx-large;margin-left: 0.1em;position: absolute;" draggable="false"></div>
+                    <h2 style="text-align: center;" langtag="51">Editor</h2>
+                    <div>
+                        <div class="infoBlock" langtag="52">Propriet&#224; entit&#224;</div>
+                        <div id="editorContent" class="infoBlock" style="width: 100%; min-height: 80%;">
+                        </div>
+                    </div>
+                </div>
+                <div id="contextMenu" modal style="display: none;" class="modalWindow inColumn">
+                    <div chatInter><span langtag="53">&#183; Invia in Chat</span></div>
+                    <div equipButton><span langtag="54">&#183; Equipaggia in Mano Principale</span></div>
+                    <div equipButton><span langtag="55">&#183; Equipaggia in Mano Secondaria</span></div>
+                    <div equipButton><span langtag="56">&#183; Equipaggia come Armatura</span></div>
+                    <div equipButton><span langtag="57">&#183; Equipaggia come Accessorio</span></div>
+                    <div equipButton><span style="display: none;" langtag="58">&#183; Equipaggia come Accessorio Secondario</span></div>
+                    <div invManage><span langtag="59">&#183; Sposta in su</span></div>
+                    <div invManage><span langtag="60">&#183; Sposta in giù</span></div>
+                    <div directEquip>
+                        <span style="display: none;"><i langtag="61">Equipaggia...</i></span>
+                        <span id="backItems" style="visibility: hidden; display: none;"><i langtag="62">&#9664; Oggetti precedenti...</i></span>
+                        <div id="listForEquip" style="display: none;"></div>
+                        <span id="forwardItems" style="visibility: hidden; display: none;"><i langtag="63">Oggetti successivi... &#9654;</i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper" id="libraryWrapper" modeSelector="library" style="display: none;">
+                <div id="libraryEditorWrap" class="editorWindow">
+                    <h2 style="text-align: center;" langtag="64">Editor Libreria</h2>
+                    <div id="librarySelector" class="editorBlock">
+                        <div>
+                            <select id="selectListToEdit"> 
+                                <option value="">...</option>
+                                <option value="classes" langtag="65">Classi</option>
+                                <option value="items" langtag="66">Oggetti</option>
+                                <option value="abilities" langtag="67">Abilit&#224;</option>
+                                <option value="wiki" langtag="68">Wiki</option>
+                            </select>
+                            <select id="listToEdit">
+                                <option value="">...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button id="confirmObjectToEdit" disabled langtag="69">Modifica</button>
+                            <button id="duplicateObject" disabled langtag="70">Crea una Copia</button>
+                            <button id="deleteObject" disabled langtag="71">Elimina</button>
+                        </div>
+                    </div>
+                    <div class="editorBlock">
+                        <div id="libraryEditor" style="width: 100%;">
+                            <i style="margin:1em;" langtag="72">Seleziona una entit&#224; per modificarla.</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="openMenu" class="fixedIcon"></div>
+            <div id="openClocks" class="fixedIcon" style="display: none;"></div>
+            <div id="openLobby" class="fixedIcon" style="display: none;"></div>
+            <div id="openChat" class="fixedIcon" style="display: none;"></div>
+            <div id="modalBckgr" modal style="display: none;"></div>
+            <div id="FUMenu" modal class="modalWindow" style="display: none;">
+                <div id="closeMenu" draggable="false"></div>
+                <h2 style="text-align: center;" langtag="73">Menu</h2>
+                <div class="inRow">
+                    <div id="selectCharacterMode" class="modeSelector" selected="true" langtag="74">Scheda PG</div>
+                    <div id="selectLibraryMode" class="modeSelector" langtag="75">Libreria</div>
+                </div>
+                <div modeSelector="charSheet">
+                    <div class="menuHeader" setExpander="1"><span langtag="77">Gestione Salvataggio</span></div>
+                    <div class="menuBlock" style="flex-direction: column;">
+                        <button id="saveBtn" style="font-size: x-large; margin:1em 1em 0 1em;border-radius: 8px;" langtag="78">Salva personaggio</button>
+                        <div class="inRow"><input type="checkbox" id="autosaveFlag"><label for="autosaveFlag" langtag="79">Abilita autosalvataggio</label></div>
+                        <button id="exportChar" style="font-size: large; margin:auto;border-radius: 8px; width: 50%;" langtag="80">Salva su disco</button>
+                        <div id="manageCache" class="menuBlock">
+                            <div>
+                                <span langtag="81">Personaggi in memoria: </span>
+                                <select id="listOfChars">
+                                    <option>...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button id="loadBtn" langtag="82">Carica</button>
+                                <button id="deleteBtn" langtag="83">Elimina</button>
+                            </div>
+                            <div id="charSharer" style="display: none;">
+                                <select id="usListChar"></select>
+                                <button id="shareChar" langtag="84">Condividi</button>
+                            </div>
+                        </div>
+                        <div id="importExport" class="menuBlock" style="padding: 5px;margin: 0 1em 1em 1em;">
+                            <span langtag="85">Importa da file </span><input type="file" id="charLoader">
+                        </div>
+                    </div>
+                </div>
+                <div modeSelector="library" style="display: none;">
+                    <div class="menuHeader" setExpander="1"><span langtag="86">Gestione Libreria</span></div>
+                    <div class="menuBlock" style="flex-direction: column;">
+                        <div id="libraryManagement" class="menuBlock" style="padding: 5px;margin: 1em 1em 1em 1em;">
+                            <div style="padding: 5px;">
+                                <div><span langtag="87">Libreria corrente: </span><span  id="curLibraryName"></span></div>
+                            </div>
+                            <div style="padding: 5px;">
+                                <div>
+                                    <span langtag="88">Librerie archiviate: </span>
+                                    <select id="listOfLibraries">
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <button id="loadLib" langtag="89">Carica</button>
+                                    <button id="removeLib" langtag="90">Elimina</button>
+                                </div>
+                                <div id="libSharer" style="display: none;">
+                                    <select id="usListLib"></select>
+                                    <button id="shareLib" langtag="91">Condividi</button>
+                                    <button id="broadcastLib" langtag="92">Manda a tutti</button>
+                                </div>
+                            </div>
+                            <div style="padding: 5px;">
+                                <button id="saveLib" style="display: none;" langtag="93">Salva Libreria Attuale</button>
+                                <button id="setLib" langtag="94">Imposta come Default</button>
+                                <button id="exportLib" langtag="95">Salva su disco</button>
+                            </div>
+                        </div>
+                        <div id="loadLibrary" class="menuBlock" style="padding: 5px;margin: 0 1em 1em 1em;">
+                            <span langtag="96">Importa da file </span><input type="file" id="libraryLoader">
+                        </div>
+                    </div>
+                    <div class="menuHeader" setExpander="1"><span langtag="97">Lingua</span></div>
+                    <div class="menuBlock" style="flex-direction: column;">
+                        <div>
+                            <h1 langtag="0">Choose your language:</h1>
+                            <select id="languagesMenu">
+                                <option value="ITA">Italiano</option>
+                                <option value="ENG">English</option>
+                            </select>
+                            <div onclick="changeLanguage(document.getElementById('languagesMenu').value);"  class="acceptBtn" langtag="1">Select</div>
+                        </div>
+                    </div>
+                    <div class="menuBlock">
+                        <button id="resetBtn" style="color:red;margin: 1em;" langtag="98">!!!RESET DATI!!!</button>
+                    </div>
+                </div>
+                
+            </div>
+            <div id="FUChat" modal style="display: none;">
+                <div>
+                    <div id="closeChat" class="fixedIcon" draggable="false"></div>
+                    <h3 style="text-align: center;" langtag="99">Chat</h3>
+                    <div id="secretRollShow" class="fixedIcon" draggable="false" style="display:none;"><label for="secretRoll" langtag="100">Chat segreta?</label><input id="secretRoll" type="checkbox" /></div>
+                </div>
+                <div id="chatLog" draggable="false"></div>
+                <div id="chatFeedback" draggable="false"></div>
+                <div id="chatBlock" class="menuBlock">
+                    <textarea id="msgToSend"></textarea>
+                    <button id="sendChatMsg" langtag="101">Invia</button>
+                </div>
+            </div>
+            <div id="FULobby" modal class="modalWindow" style="display: none;">
+                <div id="closeLobby" draggable="false"></div>
+                <h2 style="text-align: center;" langtag="102">Setup Lobby</h2>
+                <div class="menuBlock" id="lobbyMake" style="display:none;">
+                    <label for="lobbyName" langtag="103">Nome Lobby</label>
+                    <input id="lobbyName" autocomplete="off" type="text"></input>
+                    <button id="startLobby" onclick="initializeLobby()" langtag="104">Nuova Lobby...</button>
+                    <button id="endLobby" onclick="closeLobby()" disabled langtag="105">Chiudi Lobby</button>
+                </div>
+                <div class="menuBlock" id="lobbyJoin" style="display:none;">
+                    <div>
+                        <label for="idLobby" langtag="106">ID Lobby</label>
+                        <input id="idLobby" autocomplete="off" type="text"></input>
+                        <label for="userName" langtag="107">Nome in Chat</label>
+                        <input id="userName" autocomplete="off" type="text"></input>
+                        <button id="connect" onclick="joinLobby()" langtag="108">Connettiti</button>
+                        <button id="disconnect" onclick="exitLobby()" disabled langtag="109">Disconnettiti</button>
+                    </div>
+                </div>
+                <div class="menuBlock">
+                    <button id="lobbyCreator" onclick="showLobby('make')" langtag="110">Crea Lobby</button>
+                    <button id="lobbyUser" onclick="showLobby('join')" langtag="111">Unisciti a Lobby</button>
+                    <div class="menuBlock" style="margin-top:1em;">
+                        <div id="lobby" style="display: none;">
+                            <div id="lobbyID"></div>
+                            <div id="shareLobby"></div>
+                        </div>
+                        <div id="lobbyStatus"></div>
+                        <div id="userList"></div>
+                    </div>
+                    <div id="kickUserControls" style="display: none;">
+                        <select id="usListKick"></select>
+                        <button id="kickUser" langtag="112">Espelli da lobby</button>
+                    </div>
+                    <!--<div id="passwordControl" style="display: none;">
+                        <span><b>Password (facoltativa)</b></span>
+                        <input type="password" id="psw"></input>
+                    </div>-->
+                </div>
+            </div>
+            <div id="FUClocks" modal class="modalWindow" style="display: none;">
+                <div id="closeClocksList" draggable="false"></div>
+                <h2 style="text-align: center;" langtag="113">Lista degli orologi</h2>
+                <div class="menuBlock" id="clockMenu">
+                    <h3 langtag="114">Descrizione orologio (facoltativa)</h3>
+                    <textarea id="clockDescription"></textarea>
+                    <button id="clockCreator" onclick="setupClock()" langtag="115">Crea orologio</button>
+                </div>
+                <div class="menuBlock" id="clockList"></div>
+            </div>
+            <div id="popup" modal class="modalWindow" style="display: none;">
+                <div class="closeIcon" id="closePopup" draggable="false"></div>
+                <div id="popupContent"></div>
             </div>
         </div>
-		<div id="FULobby" modal class="modalWindow" style="display: none;">
-            <div id="closeLobby" draggable="false"></div>
-            <h2 style="text-align: center;">Setup Lobby</h2>
-            <div class="menuBlock" id="lobbyMake" style="display:none;">
-				<label for="lobbyName">Nome Lobby</label>
-				<input id="lobbyName" autocomplete="off" type="text"></input>
-				<button id="startLobby" onclick="initializeLobby()">Nuova Lobby...</button>
-				<button id="endLobby" onclick="closeLobby()" disabled>Chiudi Lobby</button>
-			</div>
-            <div class="menuBlock" id="lobbyJoin" style="display:none;">
-				<div>
-					<label for="idLobby">ID Lobby</label>
-					<input id="idLobby" autocomplete="off" type="text"></input>
-					<label for="userName">Nome in Chat</label>
-					<input id="userName" autocomplete="off" type="text"></input>
-					<button id="connect" onclick="joinLobby()">Connettiti</button>
-					<button id="disconnect" onclick="exitLobby()" disabled>Disconnettiti</button>
-				</div>
-			</div>
-            <div class="menuBlock">
-				<button id="lobbyCreator" onclick="showLobby('make')">Crea Lobby</button>
-				<button id="lobbyUser" onclick="showLobby('join')">Unisciti a Lobby</button>
-				<div class="menuBlock" style="margin-top:1em;">
-					<div id="lobby" style="display: none;">
-                        <div id="lobbyID"></div>
-                        <div id="shareLobby"></div>
-                    </div>
-					<div id="lobbyStatus"></div>
-					<div id="userList"></div>
-				</div>
-				<div id="kickUserControls" style="display: none;">
-					<select id="usListKick"></select>
-					<button id="kickUser">Espelli da lobby</button>
-				</div>
-				<!--<div id="passwordControl" style="display: none;">
-					<span><b>Password (facoltativa)</b></span>
-					<input type="password" id="psw"></input>
-				</div>-->
-			</div>
-        </div>
-		<div id="FUClocks" modal class="modalWindow" style="display: none;">
-            <div id="closeClocksList" draggable="false"></div>
-            <h2 style="text-align: center;">Lista degli orologi</h2>
-            <div class="menuBlock" id="clockMenu">
-				<h3>Descrizione orologio (facoltativa)</h3>
-				<textarea id="clockDescription"></textarea>
-				<button id="clockCreator" onclick="setupClock()">Crea orologio</button>
-			</div>
-            <div class="menuBlock" id="clockList"></div>
-        </div>
-        <div id="popup" modal class="modalWindow" style="display: none;">
-            <div class="closeIcon" id="closePopup" draggable="false"></div>
-            <div id="popupContent"></div>
-        </div>
-    </div>
-</body>
-
+    </body>
 </html>
