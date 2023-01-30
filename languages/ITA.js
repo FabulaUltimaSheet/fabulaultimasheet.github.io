@@ -358,7 +358,7 @@ defaultData["ITA"]= {
             AB_OGGETTO: { label: "Abilita' conferite", tag: "list", values: "abilities" },
         },
         ABILITA: {
-            TIPO: { label: "Tipo Abilita'", tag: "select", values: ["Abilita'", "Eroica", "Incantesimo"] },
+            TIPO: { label: "Tipo Abilita'", tag: "select", values: ["Beneficio", "Abilita'", "Eroica", "Incantesimo"] },
             SUBTIPO: { label: "Indica la dimensione relativa per abilita' condizionali (come gli incantesimi)", tag: "input", inputType: "number" },
             MAX_LA: { label: "Massimo Livello Abilita'", tag: "input", inputType: "number" },
             CLASSE: {
