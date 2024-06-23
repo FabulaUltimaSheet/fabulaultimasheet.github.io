@@ -192,8 +192,12 @@ async function joinLobby() {
 		return false
 	}
 	
-	initP2P(setupP2PFunctions)
-	checkForConnectionTimeout()
+	initP2P(function() {
+        setupP2PFunctions();
+        startPinger(); // Start pinging even for non-master peers
+    });
+    
+    checkForConnectionTimeout();
 };
 
 function exitLobby() {
@@ -602,7 +606,13 @@ function packProcessing(pack){
 		},
 		"updateWriters": function(){
 			document.getElementById("chatFeedback").innerHTML=pack.data
-		}
+		},
+		"ping": function() {
+			answerPing(pack.whoPings, pack.timestamp);
+		},
+		"pong": function() {
+			handlePong(pack);
+		},
 	}
 	
 	packProcessing[pack.type]()
@@ -714,25 +724,28 @@ function whoIsWriting(){
 }
 
 //tiene la connessione attiva e controlla connessioni cadute
-async function startPinger(ongoing=true){
-	if(p2p.peer != null){
-		for(let i=0;i<p2p.connList.length;i++){
-			p2p.connList[i].checked=false
-			sendData(
-				{
-					type: "ping",
-					whoPings: p2p.peer.id
-				},
-				p2p.connList[i]
-			)
-			waitForAnswer(p2p.connList[i])
-		}
-		
-		if(ongoing){
-			await sleep(1000*pingFreqSec)
-			startPinger()
-		}
-	}
+async function startPinger(ongoing = true) {
+    if (p2p.peer != null) {
+        let connections = p2p.master ? p2p.connList : [p2p.conn];
+        
+        for (let i = 0; i < connections.length; i++) {
+            connections[i].checked = false;
+            sendData(
+                {
+                    type: "ping",
+                    whoPings: p2p.peer.id,
+                    timestamp: Date.now()
+                },
+                connections[i]
+            );
+            waitForAnswer(connections[i]);
+        }
+
+        if (ongoing) {
+            await sleep(1000 * pingFreqSec);
+            startPinger();
+        }
+    }
 }
 
 async function waitForAnswer(conn){
@@ -749,15 +762,64 @@ function kickUser(connId){
 	p2p.connList.filter(c=>c.peer===connId)[0].close()
 }
 
-function answerPing(whoPings=null){
-	sendData(
-		{
-			type: "aliveCheck",
-			peer: p2p.peer.id
-		},
-		p2p.connList.filter(c=>c.peer===whoPings)[0]
-	)
+function answerPing(whoPings, timestamp) {
+    let responseConn = p2p.master ? 
+        p2p.connList.filter(c => c.peer === whoPings)[0] : 
+        p2p.conn;
+
+    sendData(
+        {
+            type: "pong",
+            respondingPeer: p2p.peer.id,
+            originalTimestamp: timestamp
+        },
+        responseConn
+    );
 }
+
+function handlePong(data) {
+    let conn = p2p.master ? 
+        p2p.connList.filter(c => c.peer === data.respondingPeer)[0] : 
+        p2p.conn;
+
+    if (conn) {
+        conn.checked = true;
+        conn.latency = Date.now() - data.originalTimestamp;
+        console.log(`Latency to ${conn.peer}: ${conn.latency}ms`);
+    }
+}
+
+function attemptReconnection() {
+	if (!p2p.connected && p2p.peer) {
+	  console.log("Attempting to reconnect...");
+	  p2p.peer.reconnect();
+	  setTimeout(attemptReconnection, 5000); // Try again in 5 seconds if still not connected
+	}
+  }
+  
+  p2p.peer.on('disconnected', function () {
+	console.log('Disconnected from server or peer.');
+	attemptReconnection();
+  });
+
+  p2p.peer.on('close', function() {
+	console.log('Connection closed. Cleaning up.');
+	p2p.connected = false;
+	// Perform cleanup here
+  });
+
+  p2p.peer.on('error', function (err) {
+	console.error('PeerJS error:', err);
+	updateStatusConnection("Connection error: " + err.type);
+	
+	if (err.type === 'network' || err.type === 'disconnected') {
+	  attemptReconnection();
+	} else if (err.type === 'server-error') {
+	  // Maybe try a different server or inform the user
+	} else {
+	  // Handle other types of errors
+	}
+  });
 
 //whisper verso uno specifico peer
 //salvare log chat?
